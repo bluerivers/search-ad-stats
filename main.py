@@ -32,7 +32,7 @@ def main(argv):
     with open(input_file_path, newline='') as input_file:
         reader = csv.reader(input_file)
         for row in reader:
-            strip = map(lambda elem: elem.strip(), row)
+            strip = list(map(lambda elem: elem.strip(), row))
             input_array.append(strip)
 
     generated_keywords = keyword_generator.generate_keyword_permutations(input_array)
