@@ -6,15 +6,17 @@ import naver_search_ad_api as naver
 
 
 def main(argv):
-    auth_file_path = None
-    input_file_path = None
-    output_file_path = None
 
     try:
-        opts, args = getopt.getopt(argv, "hi:o:s:", ["input=", "output=", "auth-file="])
+        opts, args = getopt.getopt(argv, "hei:o:s:", ["input=", "output=", "auth-file=", "extended"])
     except getopt.GetoptError:
         print('main.py -s <auth file> -i <input file> -o <output file>')
         sys.exit(2)
+
+    auth_file_path = None
+    input_file_path = None
+    output_file_path = None
+    include_hint_keywords = True
 
     for opt, arg in opts:
         if opt == '-h':
@@ -26,6 +28,8 @@ def main(argv):
             output_file_path = arg
         elif opt in ("-s", "--auth-file"):
             auth_file_path = arg
+        elif opt in ("-e", "--extended"):
+            include_hint_keywords = False
 
     print('Auth file path is', auth_file_path)
     if auth_file_path is None:
@@ -51,7 +55,7 @@ def main(argv):
         auth = json.load(auth_file)
         naver_api = naver.API(auth['customerId'], auth['licenseKey'], auth['secretKey'])
 
-    stats = naver_api.retrieve_relative_keyword_stats(generated_keywords)
+    stats = naver_api.retrieve_relative_keyword_stats(generated_keywords, include_hint_keywords)
 
     if output_file_path is None:
         print(','.join(['연관키워드', '월간검색수(PC)', '월간검색수(Mobile)',

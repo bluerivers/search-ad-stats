@@ -12,7 +12,7 @@ class API:
         self.license_key = license_key
         self.secret_key = str.encode(secret_key)
 
-    def retrieve_relative_keyword_stats(self, hint_keywords):
+    def retrieve_relative_keyword_stats(self, hint_keywords, include_hint_keywords=True):
 
         http_method = "GET"
         service_url = "/keywordstool"
@@ -36,7 +36,7 @@ class API:
             query_param = {
                 'hintKeywords': ",".join(hint_keywords[start:start + 5]),
                 'showDetail': 1,
-                'includeHintKeywords': 0
+                'includeHintKeywords': 1 if include_hint_keywords else 0
             }
 
             response = requests.get('https://api.naver.com' + service_url, headers=headers, params=query_param)
