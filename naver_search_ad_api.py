@@ -19,7 +19,7 @@ class API:
 
         # 키워드 5개만 요청을 할 수 있음
         start = 0
-        ret = []
+        ret = {}
 
         while start < len(hint_keywords):
             current_epoch_time = int(round(time.time() * 1000))
@@ -48,7 +48,13 @@ class API:
             response.encoding = 'utf-8'
             keyword_list = response.json()['keywordList']
 
-            ret.extend(keyword_list)
+            for keyword_stat in keyword_list:
+                keyword = keyword_stat['relKeyword']
+                if keyword in ret:
+                    continue
+                else:
+                    ret[keyword] = keyword_stat
+
             start += 5
 
-        return ret
+        return list(ret.values())
