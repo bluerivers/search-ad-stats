@@ -20,6 +20,10 @@ class API:
         # 키워드 5개만 요청을 할 수 있음
         start = 0
         ret = {}
+        base_time = time.time()
+        count = 0
+
+        print('# of hint_keywords', len(hint_keywords))
 
         while start < len(hint_keywords):
             current_epoch_time = int(round(time.time() * 1000))
@@ -56,5 +60,15 @@ class API:
                     ret[keyword] = keyword_stat
 
             start += 5
+
+            count += 1
+            elapsed_time = time.time() - base_time
+            if elapsed_time <= 1:
+                if count < 4:
+                    continue
+                time.sleep(1.0 - elapsed_time)
+
+            count = 0
+            base_time = time.time()
 
         return list(ret.values())
