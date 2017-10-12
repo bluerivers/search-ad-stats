@@ -14,6 +14,7 @@ class API:
 
     def retrieve_relative_keyword_stats(self, hint_keywords, include_hint_keywords=True):
 
+        max_request_per_sec = 4
         http_method = "GET"
         service_url = "/keywordstool"
 
@@ -22,8 +23,6 @@ class API:
         ret = {}
         base_time = time.time()
         count = 0
-
-        print('# of hint_keywords', len(hint_keywords))
 
         while start < len(hint_keywords):
             current_epoch_time = int(round(time.time() * 1000))
@@ -46,6 +45,10 @@ class API:
             response = requests.get('https://api.naver.com' + service_url, headers=headers, params=query_param)
 
             if response.status_code != 200:
+                if response.status_code == 429:
+                    # Throttling
+                    time.sleep(1)
+                    continue
                 # error!
                 raise Exception(response.content)
 
@@ -64,7 +67,7 @@ class API:
             count += 1
             elapsed_time = time.time() - base_time
             if elapsed_time <= 1:
-                if count < 4:
+                if count < max_request_per_sec:
                     continue
                 time.sleep(1.0 - elapsed_time)
 
